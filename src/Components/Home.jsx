@@ -4,7 +4,7 @@ import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
-import API_BASE from './config';
+import API_BASE from './config.js';
 
 function Home() {
   const [trainings, setTrainings] = useState([]);
