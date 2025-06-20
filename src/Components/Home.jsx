@@ -1,31 +1,23 @@
-// src/Home.jsx
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
-import API_BASE from './config';
 
 function Home() {
   const [trainings, setTrainings] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
-    axios.get(`${API_BASE}/api/trainings`)
-      .then(res => setTrainings(res.data))
-      .catch(console.error);
+    axios.get('http://localhost:5000/api/trainings')
+      .then(res => setTrainings(res.data));
   }, []);
 
   const handleDelete = async id => {
-    await axios.delete(`${API_BASE}/api/trainings/${id}`);
+    await axios.delete(`http://localhost:5000/api/trainings/${id}`);
     setTrainings(trainings.filter(t => t._id !== id));
   };
-
-  const filteredTrainings = trainings.filter(t =>
-    t.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    t.description.toLowerCase().includes(searchTerm.toLowerCase())
-  );
 
   const exportToPDF = () => {
     const doc = new jsPDF();
@@ -52,12 +44,19 @@ function Home() {
   const handleDrop = (e, dropIndex) => {
     const dragIndex = e.dataTransfer.getData('index');
     const items = [...trainings];
-    const [dragged] = items.splice(dragIndex, 1);
-    items.splice(dropIndex, 0, dragged);
+    const [draggedItem] = items.splice(dragIndex, 1);
+    items.splice(dropIndex, 0, draggedItem);
     setTrainings(items);
   };
 
-  const handleDragOver = e => e.preventDefault();
+  const handleDragOver = e => {
+    e.preventDefault();
+  };
+
+  const filteredTrainings = trainings.filter(t =>
+    t.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    t.description.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div>
@@ -86,18 +85,10 @@ function Home() {
             <h3>{t.title}</h3>
             <p>{t.description}</p>
             {t.imageUrl && (
-              <img
-                src={`${API_BASE}${t.imageUrl}`}
-                width="200"
-                alt="Slide"
-              />
+              <img src={`http://localhost:5000${t.imageUrl}`} width="200" alt="Slide" />
             )}
             {t.videoUrl && (
-              <video
-                width="320"
-                controls
-                src={`${API_BASE}${t.videoUrl}`}
-              />
+              <video width="320" controls src={`http://localhost:5000${t.videoUrl}`} />
             )}
             <button onClick={() => handleDelete(t._id)}>Delete</button>
           </li>
