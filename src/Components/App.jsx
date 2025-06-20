@@ -1,7 +1,7 @@
 // src/AddTraining.jsx
 import React, { useState } from 'react';
 import axios from 'axios';
-import API_BASE from './config';
+import API_BASE from './config.js';
 
 function AddTraining() {
   const [title, setTitle] = useState('');
